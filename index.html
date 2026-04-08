@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 GGC Masters Auction</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:#0a160a;color:#e8f5e9;font-family:'Segoe UI',system-ui,sans-serif;font-size:14px}
+::-webkit-scrollbar{width:6px}::-webkit-scrollbar-track{background:#0a160a}::-webkit-scrollbar-thumb{background:#2d6a2d;border-radius:3px}
+#nav{background:#0d1a0d;border-bottom:2px solid #f5e642;display:flex;align-items:center;padding:0 8px;position:sticky;top:0;z-index:100}
+#nav-logo{width:42px;height:42px;object-fit:contain;margin:6px 10px 6px 4px;filter:brightness(0) saturate(100%) invert(88%) sepia(52%) saturate(800%) hue-rotate(5deg) brightness(105%)}
+#nav-title{flex:1}
+#nav-title h1{font-size:14px;font-weight:900;color:#f5e642;letter-spacing:1px}
+#nav-title p{font-size:9px;color:#6a9a6a;letter-spacing:1px}
+.nav-tabs{display:flex;gap:0}
+.tab-btn{padding:10px 18px;border:none;cursor:pointer;font-size:12px;font-weight:700;background:transparent;color:#8fbc8f;border-bottom:3px solid transparent;font-family:inherit;white-space:nowrap}
+.tab-btn.active{background:#f5e642;color:#0a160a;border-bottom:3px solid #f5e642}
+.tab-btn:hover:not(.active){color:#c8e6c9}
+#content{max-width:900px;margin:0 auto;padding:14px 12px 48px}
+.card{background:#162916;border:1px solid #2d4a2d;border-radius:10px;padding:12px 14px;margin-bottom:8px}
+.card-gold{border-color:#f5e642}
+.badge{display:inline-block;font-size:9px;padding:2px 7px;border-radius:8px;font-weight:700;margin-left:4px}
+.badge-sold{background:#7f1d1d;color:#fca5a5}
+.badge-owner{background:#1e3a5f;color:#93c5fd}
+.badge-tier-elite{background:#78350f;color:#f5e642}
+.badge-tier-top{background:#14532d;color:#4ade80}
+.badge-tier-strong{background:#1e3a5f;color:#60a5fa}
+.badge-tier-value{background:#4a1d96;color:#c084fc}
+.badge-tier-sleeper{background:#7c2d12;color:#fb923c}
+.badge-tier-long{background:#374151;color:#9ca3af}
+.bar-wrap{background:#0a160a;border-radius:4px;height:6px;overflow:hidden;margin:4px 0}
+.bar{height:100%;border-radius:4px}
+.stat-grid{display:grid;gap:8px}
+.stat-box{background:#0a160a;border-radius:8px;padding:8px 10px;text-align:center}
+.stat-val{font-size:18px;font-weight:900}
+.stat-lbl{font-size:9px;color:#6a9a6a;text-transform:uppercase}
+.sort-btns{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.sort-btn{padding:4px 10px;border-radius:12px;border:1px solid #2d4a2d;cursor:pointer;font-size:11px;background:#162916;color:#8fbc8f;font-family:inherit}
+.sort-btn.active{background:#2d6a2d;color:#fff}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{font-size:9px;color:#6a9a6a;text-transform:uppercase;padding:4px 6px;border-bottom:1px solid #2d4a2d;font-weight:600;letter-spacing:0.5px}
+td{padding:6px 6px;border-bottom:1px solid #1a2e1a}
+tr:hover td{background:#162916}
+.under{color:#f87171;font-weight:700}
+.over{color:#86efac;font-weight:700}
+.even{color:#e8f5e9}
+.pos{color:#6a9a6a;font-size:11px}
+.refresh-bar{display:flex;gap:8px;align-items:center;margin-bottom:12px;flex-wrap:wrap}
+.btn{padding:6px 16px;border-radius:20px;border:1px solid #2d6a2d;cursor:pointer;background:#2d6a2d;color:#fff;font-size:11px;font-weight:700;font-family:inherit}
+.btn-outline{background:transparent;color:#8fbc8f}
+.btn-active{background:#78350f;border-color:#f5e642;color:#f5e642}
+.info-box{background:#162916;border:1px solid #2d6a2d;border-radius:10px;padding:12px;margin-bottom:14px;font-size:12px;color:#8fbc8f}
+@media(max-width:600px){
+  .tab-btn{padding:8px 12px;font-size:11px}
+  #nav-title h1{font-size:12px}
+  th,td{padding:4px 4px;font-size:11px}
+}
+</style>
+</head>
+<body>
+
+<div id="nav">
+  <img id="nav-logo" src="data:image/png;base64,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" alt="GGC">
+  <div id="nav-title">
+    <p>GENEVA GOLF CLUB</p>
+    <h1>2026 GGC MASTERS AUCTION</h1>
+  </div>
+  <div class="nav-tabs">
+    <button class="tab-btn active" onclick="showTab('leaderboard')">Leaderboard</button>
+    <button class="tab-btn" onclick="showTab('groups')">Groups</button>
+    <button class="tab-btn" onclick="showTab('owners')">Owners</button>
+    <button class="tab-btn" onclick="showTab('auction')">Auction</button>
+    <button class="tab-btn" onclick="showTab('payouts')">Payouts</button>
+  </div>
+</div>
+
+<div id="content"></div>
+
+<script>
+// ── DATA ──────────────────────────────────────────────────────────────────────
+const GROUPS = [{"name": "Scheffler+", "icon": "S+", "owner": "Team Billy C", "sold": 4100, "winProb": 19.6, "r1": 16.0, "r2": 17.0, "r3": 18.0, "ev": 4422, "roi": 7.9}, {"name": "Rahm+", "icon": "Ra+", "owner": "Team Homewood", "sold": 3200, "winProb": 10.5, "r1": 9.0, "r2": 10.0, "r3": 10.5, "ev": 2538, "roi": -20.7}, {"name": "Rory+", "icon": "R+", "owner": "Team Brown", "sold": 3600, "winProb": 8.9, "r1": 7.5, "r2": 8.0, "r3": 8.5, "ev": 2163, "roi": -39.9}, {"name": "Bryson+", "icon": "B+", "owner": "Team Spring", "sold": 4000, "winProb": 8.3, "r1": 8.5, "r2": 8.0, "r3": 8.0, "ev": 2070, "roi": -48.3}, {"name": "English", "icon": "EN", "owner": "Team Ratos", "sold": 4500, "winProb": 10.2, "r1": 9.5, "r2": 9.8, "r3": 10.0, "ev": 2579, "roi": -42.7}, {"name": "Major Winners", "icon": "MW", "owner": "Team Kahn", "sold": 2800, "winProb": 8.3, "r1": 7.3, "r2": 8.0, "r3": 8.5, "ev": 2133, "roi": -23.8}, {"name": "Rule 17", "icon": "R17", "owner": "Team Murphy", "sold": 2800, "winProb": 7.64, "r1": 7.3, "r2": 7.5, "r3": 7.8, "ev": 1968, "roi": -29.7}, {"name": "2 First Names", "icon": "2N", "owner": "Team Murphy", "sold": 2500, "winProb": 8.4, "r1": 8.2, "r2": 8.5, "r3": 8.8, "ev": 2154, "roi": -13.8}, {"name": "International", "icon": "IN", "owner": "Team Loberg", "sold": 2600, "winProb": 7.8, "r1": 6.3, "r2": 6.8, "r3": 7.2, "ev": 1957, "roi": -24.7}, {"name": "Asia", "icon": "AS", "owner": "Team Benson", "sold": 2600, "winProb": 5.73, "r1": 5.2, "r2": 5.5, "r3": 5.7, "ev": 1468, "roi": -43.5}, {"name": "Down Under", "icon": "DU", "owner": "Unassigned", "sold": 2800, "winProb": 5.2, "r1": 4.3, "r2": 4.5, "r3": 4.7, "ev": 1314, "roi": -53.1}, {"name": "X Men", "icon": "XM", "owner": "Team Douglas", "sold": 3600, "winProb": 7.0, "r1": 5.6, "r2": 6.5, "r3": 7.0, "ev": 1764, "roi": -51.0}, {"name": "America", "icon": "AM", "owner": "Team Murphy", "sold": 3500, "winProb": 6.5, "r1": 7.3, "r2": 6.5, "r3": 6.0, "ev": 1656, "roi": -52.7}, {"name": "Sam I Cam", "icon": "SC", "owner": "Team Benson", "sold": 3800, "winProb": 6.0, "r1": 5.8, "r2": 6.0, "r3": 6.2, "ev": 1553, "roi": -59.1}, {"name": "Ludvig+", "icon": "L+", "owner": "Team Homewood", "sold": 2600, "winProb": 5.41, "r1": 4.5, "r2": 5.0, "r3": 5.2, "ev": 1341, "roi": -48.4}, {"name": "Past Champions", "icon": "PC", "owner": "Team Hassels", "sold": 2300, "winProb": 5.01, "r1": 4.6, "r2": 5.0, "r3": 5.0, "ev": 1336, "roi": -41.9}, {"name": "Leftys", "icon": "LY", "owner": "Team Frangul", "sold": 4000, "winProb": 4.46, "r1": 3.6, "r2": 4.0, "r3": 4.2, "ev": 1138, "roi": -71.5}, {"name": "LIV", "icon": "LV", "owner": "Team Santa", "sold": 2100, "winProb": 3.7, "r1": 3.0, "r2": 3.2, "r3": 3.4, "ev": 961, "roi": -54.2}];
+const PLAYER_TO_GROUP = {"Scottie Scheffler": "Scheffler+", "Bryson DeChambeau": "Bryson+", "Rory McIlroy": "Rory+", "Jon Rahm": "Rahm+", "Ludvig Aberg": "Ludvig+", "Jason Day": "Down Under", "Min Woo Lee": "Down Under", "Adam Scott": "Down Under", "Ryan Fox": "Down Under", "Xander Schauffele": "X Men", "Max Homa": "X Men", "Alex Noren": "X Men", "Max Greyserman": "X Men", "Cameron Young": "Sam I Cam", "Sam Burns": "Sam I Cam", "Sam Stevens": "Sam I Cam", "Sami Valimaki": "Sam I Cam", "Collin Morikawa": "Major Winners", "Brooks Koepka": "Major Winners", "Gary Woodland": "Major Winners", "J.J. Spaun": "Major Winners", "Keegan Bradley": "Major Winners", "Robert MacIntyre": "Leftys", "Akshay Bhatia": "Leftys", "Brian Harman": "Leftys", "Hideki Matsuyama": "Asia", "Si Woo Kim": "Asia", "Sung-Jae Im": "Asia", "Haotong Li": "Asia", "Cameron Smith": "LIV", "Tyrrell Hatton": "LIV", "Sergio Garcia": "LIV", "Charl Schwartzel": "LIV", "Tom McKibbin": "LIV", "Dustin Johnson": "LIV", "Patrick Cantlay": "America", "Jake Knapp": "America", "Maverick McNealy": "America", "Daniel Berger": "America", "John Keefer": "America", "Andrew Novak": "America", "Matt Fitzpatrick": "English", "Tommy Fleetwood": "English", "Harry Hall": "English", "Marco Penge": "English", "Aaron Rai": "English", "Harris English": "English", "Viktor Hovland": "International", "Shane Lowry": "International", "Sepp Straka": "International", "Rasmus Hojgaard": "International", "Nicolai Hojgaard": "International", "Casey Jarvis": "International", "Rasmus Neergaard-Petersen": "International", "Carlos Ortiz": "International", "Kristoffer Reitan": "International", "Justin Rose": "2 First Names", "Wyndham Clark": "2 First Names", "Russell Henley": "2 First Names", "Ryan Gerard": "2 First Names", "Corey Conners": "2 First Names", "Michael Kim": "2 First Names", "Nick Taylor": "2 First Names", "Michael Brennan": "2 First Names", "Davis Riley": "2 First Names", "Patrick Reed": "Past Champions", "Jordan Spieth": "Past Champions", "Bubba Watson": "Past Champions", "Vijay Singh": "Past Champions", "Angel Cabrera": "Past Champions", "Fred Couples": "Past Champions", "Zach Johnson": "Past Champions", "Jose Maria Olazabal": "Past Champions", "Danny Willett": "Past Champions", "Justin Thomas": "Rule 17", "Nico Echavarria": "Rule 17", "Ben Griffin": "Rule 17", "Jacob Bridgeman": "Rule 17", "Chris Gotterup": "Rule 17", "Kurt Kitayama": "Rule 17", "Aldrich Potgieter": "Rule 17", "Brian Campbell": "Rule 17"};
+const POT = 57400;
+const D = {"p1": 11480, "p2": 8610, "p3": 5740, "p4": 4592, "p5": 4018, "p6": 3444, "p7": 2870, "p8": 2296, "dailyLow": 1722, "r2leader": 1722, "r3leader": 1722, "lowRound": 1148, "hio": 1722, "par3": 1148};
+const GROUP_MAP = {};
+GROUPS.forEach(g => GROUP_MAP[g.name] = g);
+
+// ── STATE ─────────────────────────────────────────────────────────────────────
+let currentTab = 'leaderboard';
+let leaderboard = [];
+let lastUpdated = null;
+let autoRefresh = false;
+let autoTimer = null;
+let auctionSort = 'roi';
+let groupSort = 'score';
+
+// ── UTILS ─────────────────────────────────────────────────────────────────────
+function fmt(n) {
+  if (n === null || n === undefined) return '-';
+  if (n === 0) return 'E';
+  return n > 0 ? '+' + n : String(n);
+}
+function scoreClass(n) {
+  if (n === null || n === undefined) return '';
+  if (n < 0) return 'under';
+  if (n > 0) return 'over';
+  return 'even';
+}
+function parseSc(s) {
+  if (!s || s === '-' || s === '') return null;
+  if (s === 'E') return 0;
+  const n = parseInt(s);
+  return isNaN(n) ? null : n;
+}
+function tierBadge(w) {
+  if (w >= 15) return '<span class="badge badge-tier-elite">Elite</span>';
+  if (w >= 8)  return '<span class="badge badge-tier-top">Top</span>';
+  if (w >= 4)  return '<span class="badge badge-tier-strong">Strong</span>';
+  if (w >= 2)  return '<span class="badge badge-tier-value">Value</span>';
+  if (w >= 1)  return '<span class="badge badge-tier-sleeper">Sleeper</span>';
+  return '<span class="badge badge-tier-long">Long</span>';
+}
+function dollar(n) { return '$' + Math.round(n).toLocaleString(); }
+
+// ── NAV ───────────────────────────────────────────────────────────────────────
+function showTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i) => {
+    const tabs = ['leaderboard','groups','owners','auction','payouts'];
+    b.classList.toggle('active', tabs[i] === tab);
+  });
+  render();
+}
+
+// ── FETCH SCORES ──────────────────────────────────────────────────────────────
+async function fetchScores() {
+  const btn = document.getElementById('refresh-btn');
+  if (btn) { btn.textContent = 'Loading...'; btn.disabled = true; }
+  try {
+    const res = await fetch('https://site.api.espn.com/apis/site/v2/sports/golf/pga/leaderboard?event=401353338');
+    const data = await res.json();
+    const comps = data?.events?.[0]?.competitions?.[0]?.competitors || [];
+    leaderboard = comps.map(c => {
+      const rounds = (c.linescores || []).map(r => parseSc(r.displayValue));
+      return {
+        name: c.athlete?.displayName || '',
+        pos: c.status?.position?.displayName || '',
+        thru: c.status?.thru || '',
+        total: parseSc(c.score?.displayValue),
+        rounds,
+      };
+    }).sort((a,b) => {
+      if (a.total === null && b.total === null) return 0;
+      if (a.total === null) return 1;
+      if (b.total === null) return -1;
+      return a.total - b.total;
+    });
+    lastUpdated = new Date();
+  } catch(e) {
+    console.error('Fetch failed:', e);
+  }
+  render();
+}
+
+function toggleAuto() {
+  autoRefresh = !autoRefresh;
+  if (autoRefresh) {
+    autoTimer = setInterval(fetchScores, 60000);
+  } else {
+    clearInterval(autoTimer);
+  }
+  render();
+}
+
+// ── BUILD GROUP SCORES ────────────────────────────────────────────────────────
+function getGroupScores() {
+  const scores = {};
+  GROUPS.forEach(g => scores[g.name] = { ...g, players: [], bestTotal: null, bestPos: null });
+  leaderboard.forEach((p, idx) => {
+    const grp = PLAYER_TO_GROUP[p.name];
+    if (!grp || !scores[grp]) return;
+    scores[grp].players.push({ ...p, rank: idx + 1 });
+    if (scores[grp].bestTotal === null || (p.total !== null && p.total < scores[grp].bestTotal)) {
+      scores[grp].bestTotal = p.total;
+      scores[grp].bestPos = idx + 1;
+    }
+  });
+  return Object.values(scores);
+}
+
+function getOwnerScores(groupScores) {
+  const owners = {};
+  groupScores.forEach(g => {
+    const o = g.owner || 'Unassigned';
+    if (!owners[o]) owners[o] = { owner: o, groups: [], bestTotal: null, bestPos: null, spent: 0 };
+    owners[o].groups.push(g);
+    owners[o].spent += g.sold;
+    if (g.bestTotal !== null && (owners[o].bestTotal === null || g.bestTotal < owners[o].bestTotal)) {
+      owners[o].bestTotal = g.bestTotal;
+      owners[o].bestPos = g.bestPos;
+    }
+  });
+  return Object.values(owners).sort((a,b) => {
+    if (a.bestTotal === null && b.bestTotal === null) return 0;
+    if (a.bestTotal === null) return 1;
+    if (b.bestTotal === null) return -1;
+    return a.bestTotal - b.bestTotal;
+  });
+}
+
+// ── RENDER TABS ───────────────────────────────────────────────────────────────
+function renderLeaderboard() {
+  const hasData = leaderboard.length > 0;
+  const updated = lastUpdated ? lastUpdated.toLocaleTimeString() : 'Not loaded';
+  let html = `
+    <div class="refresh-bar">
+      <button id="refresh-btn" class="btn" onclick="fetchScores()">Refresh Scores</button>
+      <button class="btn btn-outline ${autoRefresh ? 'btn-active' : ''}" onclick="toggleAuto()">${autoRefresh ? 'Auto: ON' : 'Auto: OFF'}</button>
+      <span style="font-size:11px;color:#6a9a6a">Updated: ${updated}${autoRefresh ? ' (60s)' : ''}</span>
+    </div>`;
+
+  if (!hasData) {
+    html += `
+      <div style="text-align:center;padding:60px 20px">
+        <div style="font-size:48px;margin-bottom:16px">&#9971;</div>
+        <div style="font-size:20px;font-weight:900;color:#f5e642;margin-bottom:8px">Tournament Starts Thursday April 9!</div>
+        <div style="font-size:14px;color:#4ade80;margin-bottom:24px">First tee time: 8:00 AM ET &mdash; Augusta National</div>
+        <div class="card" style="max-width:380px;margin:0 auto 20px">
+          <div style="color:#8fbc8f;line-height:2">
+            <div>Round 1 &mdash; Thu April 9</div><div>Round 2 &mdash; Fri April 10</div>
+            <div>Round 3 &mdash; Sat April 11</div><div>Round 4 &mdash; Sun April 12</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+          <div class="card" style="min-width:120px">
+            <div class="stat-val" style="color:#f5e642">18</div><div class="stat-lbl">Groups</div>
+          </div>
+          <div class="card" style="min-width:120px">
+            <div class="stat-val" style="color:#4ade80">$57,400</div><div class="stat-lbl">Total Pot</div>
+          </div>
+          <div class="card" style="min-width:120px">
+            <div class="stat-val" style="color:#60a5fa">10</div><div class="stat-lbl">Teams</div>
+          </div>
+        </div>
+        <div style="margin-top:20px;font-size:13px;color:#6a9a6a">
+          Press <b style="color:#f5e642">Refresh Scores</b> once play begins tomorrow morning.
+        </div>
+      </div>`;
+  } else {
+    const rounds = Math.max(...leaderboard.map(p => p.rounds.filter(r=>r!==null).length));
+    html += `<div style="font-size:11px;color:#6a9a6a;margin-bottom:8px">Round ${rounds} &bull; ${leaderboard.length} players</div>`;
+    html += `<div style="overflow-x:auto"><table>
+      <thead><tr>
+        <th style="width:36px">Pos</th><th>Player</th><th>Group</th><th>Owner</th>
+        <th style="text-align:center">R1</th><th style="text-align:center">R2</th>
+        <th style="text-align:center">R3</th><th style="text-align:center">R4</th>
+        <th style="text-align:right">TOT</th>
+      </tr></thead><tbody>`;
+    leaderboard.forEach((p, i) => {
+      const grp = PLAYER_TO_GROUP[p.name] || '';
+      const owner = grp ? (GROUP_MAP[grp]?.owner || '') : '';
+      const top8 = i < 8;
+      html += `<tr style="${background:top8?'#1a2e1a':'transparent'}">
+        <td class="pos">${p.pos || (i+1)}</td>
+        <td style="font-weight:${top8?700:400}">${p.name}${p.thru ? '<span style="font-size:10px;color:#6a9a6a;margin-left:4px">thru '+p.thru+'</span>' : ''}</td>
+        <td style="font-size:11px;color:#8fbc8f">${grp}</td>
+        <td style="font-size:11px;color:#60a5fa">${owner}</td>
+        ${[0,1,2,3].map(r => `<td class="${scoreClass(p.rounds[r])}" style="text-align:center">${fmt(p.rounds[r])}</td>`).join('')}
+        <td class="${scoreClass(p.total)}" style="text-align:right;font-weight:700;font-size:14px">${fmt(p.total)}</td>
+      </tr>`;
+    });
+    html += `</tbody></table></div>`;
+  }
+  return html;
+}
+
+function renderGroups() {
+  const gs = getGroupScores().sort((a,b) => {
+    if (groupSort === 'score') {
+      if (a.bestTotal === null && b.bestTotal === null) return 0;
+      if (a.bestTotal === null) return 1; if (b.bestTotal === null) return -1;
+      return a.bestTotal - b.bestTotal;
+    }
+    if (groupSort === 'spent') return b.sold - a.sold;
+    if (groupSort === 'win') return b.winProb - a.winProb;
+    return 0;
+  });
+  let html = `<div class="sort-btns">
+    <span style="font-size:11px;color:#6a9a6a">Sort:</span>
+    <button class="sort-btn ${groupSort==='score'?'active':''}" onclick="groupSort='score';render()">Score</button>
+    <button class="sort-btn ${groupSort==='spent'?'active':''}" onclick="groupSort='spent';render()">$ Paid</button>
+    <button class="sort-btn ${groupSort==='win'?'active':''}" onclick="groupSort='win';render()">Win%</button>
+  </div>`;
+  gs.forEach((g, i) => {
+    const players = g.players.sort((a,b) => (a.total??99)-(b.total??99));
+    const estPay = g.bestPos && g.bestPos <= 8 ? Math.round(POT * [.20,.15,.10,.08,.07,.06,.05,.04][g.bestPos-1]) : 0;
+    html += `<div class="card ${i<3 && g.bestTotal!==null ? 'card-gold' : ''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <span style="font-weight:800;font-size:15px">${g.name}</span>
+          ${tierBadge(g.winProb)}
+          <span class="badge badge-sold">${dollar(g.sold)}</span>
+          <span class="badge badge-owner">${g.owner}</span>
+          <div style="font-size:10px;color:#6a9a6a;margin-top:2px">Win: ${g.winProb}% &bull; R1: ${g.r1}% &bull; R3: ${g.r3}%</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:24px;font-weight:900;color:${i===0&&g.bestTotal!==null?'#f5e642':'#a5d6a7'}" class="${scoreClass(g.bestTotal)}">${fmt(g.bestTotal)}</div>
+          <div style="font-size:10px;color:#6a9a6a">${g.bestPos ? 'T'+g.bestPos+' best' : 'No scores yet'}</div>
+          ${estPay > 0 ? `<div style="font-size:11px;color:#4ade80;font-weight:700">~${dollar(estPay)} est.</div>` : ''}
+        </div>
+      </div>
+      ${players.length ? `<table style="font-size:11px">
+        <thead><tr><th>Pos</th><th>Player</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th style="text-align:right">Tot</th></tr></thead>
+        <tbody>${players.map(p => `<tr>
+          <td class="pos">${p.pos||('T'+p.rank)}</td><td>${p.name}</td>
+          ${[0,1,2,3].map(r=>`<td class="${scoreClass(p.rounds[r])}" style="text-align:center">${fmt(p.rounds[r])}</td>`).join('')}
+          <td class="${scoreClass(p.total)}" style="text-align:right;font-weight:700">${fmt(p.total)}</td>
+        </tr>`).join('')}</tbody>
+      </table>` : `<div style="color:#4a7a4a;font-size:12px;font-style:italic">Players will appear here once scores are posted.</div>`}
+    </div>`;
+  });
+  return html;
+}
+
+function renderOwners() {
+  const gs = getGroupScores();
+  const owners = getOwnerScores(gs);
+  let html = '';
+  owners.forEach((o, i) => {
+    const allPlayers = o.groups.flatMap(g=>g.players).sort((a,b)=>(a.total??99)-(b.total??99));
+    const estPay = o.bestPos && o.bestPos <= 8 ? Math.round(POT * [.20,.15,.10,.08,.07,.06,.05,.04][o.bestPos-1]) : 0;
+    html += `<div class="card ${i===0&&o.bestTotal!==null?'card-gold':''}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px">
+        <div>
+          <span style="font-size:18px;font-weight:900;color:#f5e642">${i+1}. ${o.owner}</span>
+          <div style="font-size:11px;color:#6a9a6a;margin-top:2px">${dollar(o.spent)} invested &bull; ${o.groups.length} groups</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:28px;font-weight:900" class="${scoreClass(o.bestTotal)}">${fmt(o.bestTotal)}</div>
+          <div style="font-size:10px;color:#6a9a6a">${o.bestPos ? 'Best: T'+o.bestPos : 'No scores yet'}</div>
+          ${estPay > 0 ? `<div style="font-size:13px;color:#4ade80;font-weight:800">~${dollar(estPay)}</div>` : ''}
+        </div>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:${allPlayers.length?'10px':'0'}">
+        ${o.groups.map(g => `<span style="background:#0a160a;border-radius:8px;padding:4px 10px;font-size:11px">
+          <b style="color:#8fbc8f">${g.name}</b>
+          <span style="color:#f87171;margin-left:4px">${dollar(g.sold)}</span>
+          ${g.bestTotal!==null ? `<span class="${scoreClass(g.bestTotal)}" style="margin-left:4px;font-weight:700">${fmt(g.bestTotal)}</span>` : ''}
+        </span>`).join('')}
+      </div>
+      ${allPlayers.length ? `<table style="font-size:11px">
+        <thead><tr><th>Pos</th><th>Player</th><th>Group</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th><th style="text-align:right">Tot</th></tr></thead>
+        <tbody>${allPlayers.slice(0,6).map(p => `<tr>
+          <td class="pos">${p.pos||('T'+p.rank)}</td><td style="font-weight:600">${p.name}</td>
+          <td style="color:#60a5fa">${PLAYER_TO_GROUP[p.name]||''}</td>
+          ${[0,1,2,3].map(r=>`<td class="${scoreClass(p.rounds[r])}" style="text-align:center">${fmt(p.rounds[r])}</td>`).join('')}
+          <td class="${scoreClass(p.total)}" style="text-align:right;font-weight:700">${fmt(p.total)}</td>
+        </tr>`).join('')}</tbody>
+      </table>` : ''}
+    </div>`;
+  });
+  return html;
+}
+
+function renderAuction() {
+  const sorted = [...GROUPS].sort((a,b) => {
+    if (auctionSort === 'roi') return b.roi - a.roi;
+    if (auctionSort === 'ev') return b.ev - a.ev;
+    if (auctionSort === 'paid') return b.sold - a.sold;
+    if (auctionSort === 'win') return b.winProb - a.winProb;
+    return 0;
+  });
+  let html = `
+    <div class="info-box card-gold">
+      <b style="color:#f5e642">Calibrated from 9 actual sales.</b>
+      Scheffler+ at $4,100 was the steal of the night (fair value ~$6,300). Leftys at $4,000 was the biggest overpay (fair ~$2,100).
+      Total pot: <b style="color:#f5e642">$57,400</b>.
+    </div>
+    <div class="sort-btns">
+      <span style="font-size:11px;color:#6a9a6a">Sort:</span>
+      <button class="sort-btn ${auctionSort==='roi'?'active':''}" onclick="auctionSort='roi';render()">ROI %</button>
+      <button class="sort-btn ${auctionSort==='ev'?'active':''}" onclick="auctionSort='ev';render()">Exp. Value</button>
+      <button class="sort-btn ${auctionSort==='paid'?'active':''}" onclick="auctionSort='paid';render()">$ Paid</button>
+      <button class="sort-btn ${auctionSort==='win'?'active':''}" onclick="auctionSort='win';render()">Win %</button>
+    </div>`;
+  sorted.forEach(g => {
+    const roiPos = g.roi >= 0;
+    const roiNear = g.roi >= -25;
+    const roiColor = roiPos ? '#4ade80' : roiNear ? '#f5e642' : '#f87171';
+    const pct = Math.min(100, (g.ev / g.sold) * 100);
+    html += `<div class="card" style="border-color:${roiPos?'#2d6a2d':'#2d4a2d'}">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px">
+        <div>
+          <b style="font-size:15px">${g.name}</b>
+          ${tierBadge(g.winProb)}
+          <span class="badge badge-owner">${g.owner}</span>
+          <div style="font-size:10px;color:#6a9a6a;margin-top:2px">Paid: ${dollar(g.sold)} &bull; EV: ${dollar(g.ev)} &bull; Win: ${g.winProb}%</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:22px;font-weight:900;color:${roiColor}">${g.roi>0?'+':''}${g.roi}%</div>
+          <div style="font-size:9px;color:#6a9a6a">expected ROI</div>
+        </div>
+      </div>
+      <div class="bar-wrap"><div class="bar" style="width:${pct}%;background:${roiColor}"></div></div>
+      <div style="font-size:10px;color:#6a9a6a;margin-top:3px">
+        ${dollar(g.ev)} expected &bull; ${dollar(g.ev-g.sold)} P&amp;L &bull; ${Math.round(pct)}c per $1
+      </div>
+    </div>`;
+  });
+  return html;
+}
+
+function renderPayouts() {
+  let html = `<div class="card card-gold" style="margin-bottom:16px">
+    <h3 style="color:#f5e642;font-size:14px;font-weight:700;margin-bottom:12px">PAYOUT STRUCTURE &mdash; Total Pot: $57,400</h3>
+    <div class="stat-grid" style="grid-template-columns:1fr 1fr">`;
+  const items = [
+    ['1st Place (20%)', D.p1],['2nd Place (15%)', D.p2],['3rd Place (10%)', D.p3],
+    ['4th Place (8%)', D.p4],['5th Place (7%)', D.p5],['6th Place (6%)', D.p6],
+    ['7th Place (5%)', D.p7],['8th Place (4%)', D.p8],
+    ['Daily Low Round x4 (3%/day)', D.dailyLow],
+    ['R2 Leader (3%)', D.r2leader],['R3 Leader (3%)', D.r3leader],
+    ['Low Round of Tourney (2%)', D.lowRound],
+    ['Holes in One (3%)', D.hio],['Par 3 Contest Winner (2%)', D.par3],
+  ];
+  items.forEach(([label, val]) => {
+    html += `<div style="display:flex;justify-content:space-between;background:#0a160a;border-radius:6px;padding:5px 9px;font-size:11px">
+      <span style="color:#8fbc8f">${label}</span>
+      <span style="color:#f5e642;font-weight:700">${dollar(val)}</span>
+    </div>`;
+  });
+  html += `</div></div>`;
+
+  // ROI table
+  const sorted = [...GROUPS].sort((a,b) => b.roi - a.roi);
+  html += `<h3 style="color:#f5e642;font-size:13px;font-weight:700;margin-bottom:10px">Expected ROI by Group</h3>
+    <div style="overflow-x:auto"><table>
+    <thead><tr><th>Group</th><th>Owner</th><th style="text-align:right">Paid</th><th style="text-align:right">Exp. Value</th><th style="text-align:right">P&amp;L</th><th style="text-align:right">ROI</th></tr></thead>
+    <tbody>`;
+  sorted.forEach(g => {
+    const roiPos = g.roi >= 0, roiNear = g.roi >= -25;
+    const roiColor = roiPos ? '#4ade80' : roiNear ? '#f5e642' : '#f87171';
+    html += `<tr>
+      <td><b>${g.name}</b></td>
+      <td style="color:#60a5fa;font-size:11px">${g.owner}</td>
+      <td style="text-align:right;color:#f87171">${dollar(g.sold)}</td>
+      <td style="text-align:right;color:#60a5fa">${dollar(g.ev)}</td>
+      <td style="text-align:right;color:${roiColor}">${g.ev >= g.sold ? '+' : ''}${dollar(g.ev-g.sold)}</td>
+      <td style="text-align:right;font-weight:700;color:${roiColor}">${g.roi > 0 ? '+' : ''}${g.roi}%</td>
+    </tr>`;
+  });
+  html += `</tbody></table></div>`;
+  return html;
+}
+
+// ── MAIN RENDER ───────────────────────────────────────────────────────────────
+function render() {
+  const el = document.getElementById('content');
+  if (currentTab === 'leaderboard') el.innerHTML = renderLeaderboard();
+  else if (currentTab === 'groups')  el.innerHTML = renderGroups();
+  else if (currentTab === 'owners')  el.innerHTML = renderOwners();
+  else if (currentTab === 'auction') el.innerHTML = renderAuction();
+  else if (currentTab === 'payouts') el.innerHTML = renderPayouts();
+};
+
+// ── INIT ──────────────────────────────────────────────────────────────────────
+render();
+fetchScores();
+</script>
+</body>
+</html>
